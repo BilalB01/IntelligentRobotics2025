@@ -28,6 +28,8 @@
 
 DynamixelWorkbench dxl_wb;
 
+int maxSpeed = 100;
+
 bool checkDynamixel() 
 {
   Serial.begin(57600);
@@ -81,3 +83,68 @@ bool checkDynamixel()
     }
   }  
 }
+
+bool setMode(int dxl_id, int mode){
+  const char *log;
+  dxl_wb.wheelMode(dxl_id, mode, &log);
+  return true;
+}
+
+bool setVelocity(int vel1, int vel2){
+  if (abs(vel1) > maxSpeed) {
+    vel1 = 0;
+    return false;
+  }
+  if (abs(vel2) > maxSpeed) {
+    vel2 = 0;
+    return false;
+  }
+
+  dxl_wb.goalVelocity(1, vel1);
+  dxl_wb.goalVelocity(2, vel2);
+  return true;
+}
+
+bool drive(int vel1, int vel2, int duration) {
+  unsigned long startTime = millis();   // Starttijd vastleggen
+  setVelocity(vel1, vel2);
+  while (millis() - startTime <= (unsigned long)duration * 1000) {
+    delay(20);
+  }
+  setVelocity(0, 0);
+  return true;
+}
+
+bool turn(float degrees = 0.0){
+ float currentYaw = getYaw();
+ float initialYaw = currentYaw; 
+
+float goalYaw = initialYaw + degrees; 
+Serial.println("currentYaw:" + String(currentYaw)); 
+
+// turn CW
+if( goalYaw > 0 ){
+   setVelocity(50, -50); 
+while (currentYaw <= goalYaw){
+  currentYaw = getYaw();
+ delay(20);
+}
+ setVelocity(0,0);
+ return true;
+}
+
+// turn CCW 
+if( goalYaw < 0 ){
+   setVelocity(-50, 50); 
+while (currentYaw >= goalYaw){
+  currentYaw = getYaw();
+ delay(20);
+}
+ setVelocity (0,0);
+ return true;
+}
+
+
+
+}
+
