@@ -29,18 +29,6 @@ float getYaw(){
   return (IMU.rpy[2]);
 }
 
-bool getSW1State(){
-  // sw1 = 34
- int  buttonState = digitalRead(34);
-  return (buttonState); 
-}
-bool getSW2State(){
-  // sw2 = 35
-  int  buttonState = digitalRead(35);
-  return (buttonState); 
-}
-
-
 float getBatteryVoltage(void) {
   int raw = analogRead(BDPIN_BAT_PWR_ADC);
   float voltage = (float)raw / 56.01; // spanningsdeler x11
