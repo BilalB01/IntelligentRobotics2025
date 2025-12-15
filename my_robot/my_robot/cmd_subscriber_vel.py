@@ -12,7 +12,14 @@ class CmdSubscriberVel(Node):
         self.right = 0
 
         self.create_subscription(String, 'key_cmd', self.callback, 10)
+    """ def clamp(self, value, min_value=-255, max_value=255):
+        return max(min(value, max_value), min_value)
 
+    def send(self):
+        # Appliquer les limites AVANT l'envoi
+        self.left = self.clamp(self.left)
+        self.right = self.clamp(self.right)
+       """
     def send(self):
         cmd = f"V {self.left} {self.right}\n"
         self.ser.write(cmd.encode())
